@@ -1,41 +1,59 @@
-let ingredients = []
 
-function Ingredient (x,y,radius) {
-    this.loc = createVector(x,y)
-    this.vel = createVector(0,0)
-    this.acc = createVector(0,0)
+
+function Ingredient(x, y, radius) {
+    this.loc = createVector(x, y)
+    this.vel = createVector(0, 0)
+    this.acc = createVector(0, 0)
     this.r = radius
     this.mass = radius * 2
-    this.img = loadImage("/PizzaGame/assets/salami.png")
+    this.img = loadImage("/assets/salami.png")
+
 }
 
 Ingredient.prototype.applyForce = function (force) {
-    fAcc = force.div(mass)
+    let fAcc = force.div(this.mass)
     this.acc.add(fAcc)
 }
 
 Ingredient.prototype.update = function () {
-    this.vel.add(acc)
-    this.loc.add(vel)
+    this.vel.add(this.acc)
+    this.loc.add(this.vel)
+    this.acc.mult(0)
 }
 
 Ingredient.prototype.render = function () {
-    imageMode(CENTER)
-    image(img, this.loc.x, this.loc.y, this.r, this.r)
+    image(this.img, this.loc.x, this.loc.y, this.r, this.r)
 }
 
-Ingredient.prototype.add = function () {
-    ingredients.push(new Ingredient(random(width), 0, random(20,50)))
+Ingredient.prototype.isOut = function () {
+    if (this.loc.y > height) {
+        return true
+    } else {
+        return false
+    }
 }
 
-const gravitation = createVector(0,1)
 
-function setup () {
-    createCanvas(windowWidth, windowHeight)
-    background(255)
-    for (let i = 0; i < )
+// Ingredients system class
+
+function IngSystem () {
+    this.ingredients = []
 }
 
-function draw () {
-    
+IngSystem.prototype.add = function () {
+    this.ingredients.push(new Ingredient(random(width), 0, random(20, 100)))
+}
+
+IngSystem.prototype.run =function () {
+    for (let i = this.ingredients.length-1; i>= 0; i--) {
+        const gravitation = createVector(0,1)
+        let ing = this.ingredients[i]
+        ing.applyForce(gravitation)
+        ing.update()
+        ing.render()
+        
+        if(ing.isOut()) {
+            this.ingredients.splice(i,1)
+        }
+    }
 }
