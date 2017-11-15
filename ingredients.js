@@ -1,11 +1,11 @@
-function Ingredient(x, y, radius) {
+function Ingredient(x, y, radius, terminalOffset) {
     this.loc = createVector(x, y)
     this.vel = createVector(0, 0)
     this.acc = createVector(0, 0)
     this.r = radius
     this.mass = radius * 2
-    this.img = loadImage("/assets/salami.png")
-
+    this.img = loadImage("assets/salami.png")
+    this.terminalOffset = terminalOffset
 }
 
 Ingredient.prototype.applyForce = function (force) {
@@ -24,7 +24,7 @@ Ingredient.prototype.render = function () {
 }
 
 Ingredient.prototype.isOut = function () {
-    if (this.loc.y > height) {
+    if (this.loc.y > height-this.terminalOffset) {
         return true
     } else {
         return false
@@ -33,10 +33,11 @@ Ingredient.prototype.isOut = function () {
 
 // Mushroom constructor, make Mushroom inherit from Ingredient
 
-function Mushroom (x,y,radius) {
+function Mushroom (x,y,radius, terminalOffset) {
     Ingredient.call(this, x,y,radius)
-    this.img = loadImage("/assets/mushroom.png")
+    this.img = loadImage("assets/mushroom.png")
     this.angle = random(-2*PI, 2*PI)
+    this.terminalOffset = terminalOffset
 }
 
 Mushroom.prototype = Object.create(Ingredient.prototype)
@@ -54,16 +55,17 @@ Mushroom.prototype.render = function () {
 
 // Ingredients system class
 
-function IngSystem() {
+function IngSystem(terminalOffset) {
+    this.terminalOffset = terminalOffset
     this.ingredients = []
 }
 
 IngSystem.prototype.add = function () {
     let x = random(1)
     if (x > 0.5) {
-            this.ingredients.push(new Ingredient(random(width), 0, random(20, 100)))
+            this.ingredients.push(new Ingredient(random(width), 0, random(20, 100),this.terminalOffset))
     } else {
-            this.ingredients.push(new Mushroom(random(width), 0, random(20, 100)))
+            this.ingredients.push(new Mushroom(random(width), 0, random(20, 100),this.terminalOffset))
     }
 
 }
